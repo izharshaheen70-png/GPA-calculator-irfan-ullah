@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPA Calculator</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+body{
+  background: linear-gradient(135deg,#00bfff,#0066cc);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+header{
+  background:#003366;
+  color:white;
+  padding:20px;
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  letter-spacing:1px;
+}
+
+.container{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.calculator{
+  background:white;
+  width:350px;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  text-align:center;
+}
+
+.calculator h2{
+  margin-bottom:15px;
+  color:#003366;
+}
+
+.subject{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.subject input{
+  flex:1;
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+button{
+  padding:10px;
+  margin:5px 0;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.add-btn{
+  background:#00bfff;
+  color:white;
+}
+
+.calc-btn{
+  background:#0066cc;
+  color:white;
+  width:100%;
+}
+
+button:hover{
+  opacity:0.8;
+}
+
+.result{
+  margin-top:15px;
+  font-size:20px;
+  font-weight:bold;
+  color:#0066cc;
+}
+
+footer{
+  background:#003366;
+  color:white;
+  text-align:center;
+  padding:15px;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+GPA Calculator
+</header>
+
+<div class="container">
+  <div class="calculator">
+    <h2>Calculate Your GPA</h2>
+
+    <div id="subjects">
+      <div class="subject">
+        <input type="text" class="grade" placeholder="Grade (A,B,C)">
+        <input type="number" class="credit" placeholder="Credits">
+      </div>
+    </div>
+
+    <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
+    <button class="calc-btn" onclick="calculateGPA()">Calculate GPA</button>
+
+    <div class="result">
+      Your GPA: <span id="result">0.00</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+Powered by Irfan Ullah
+</footer>
+
+<script>
+const gradeMap = {
+  A:4,
+  B:3,
+  C:2,
+  D:1,
+  F:0
+};
+
+function addSubject(){
+  const div = document.createElement("div");
+  div.className="subject";
+  div.innerHTML = `
+    <input type="text" class="grade" placeholder="Grade (A,B,C)">
+    <input type="number" class="credit" placeholder="Credits">
+  `;
+  document.getElementById("subjects").appendChild(div);
+}
+
+function calculateGPA(){
+  const grades = document.querySelectorAll(".grade");
+  const credits = document.querySelectorAll(".credit");
+
+  let totalPoints = 0;
+  let totalCredits = 0;
+
+  for(let i=0;i<grades.length;i++){
+    const g = grades[i].value.toUpperCase();
+    const c = parseFloat(credits[i].value) || 1;
+
+    if(gradeMap[g] !== undefined){
+      totalPoints += gradeMap[g] * c;
+      totalCredits += c;
+    }
+  }
+
+  let gpa = totalPoints / totalCredits;
+
+  if(!totalCredits){
+    gpa = 0;
+  }
+
+  document.getElementById("result").innerText = gpa.toFixed(2);
+}
+</script>
+
+</body>
+</html>
