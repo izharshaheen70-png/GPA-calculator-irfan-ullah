@@ -3,106 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPA Calculator</title>
+<title>Calculators App</title>
 
 <style>
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: Arial, sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
 }
 
 body{
-  background: linear-gradient(135deg,#00bfff,#0066cc);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
+background:#f2f6ff;
+display:flex;
+flex-direction:column;
+min-height:100vh;
 }
 
+/* HEADER */
 header{
-  background:#003366;
-  color:white;
-  padding:20px;
-  text-align:center;
-  font-size:28px;
-  font-weight:bold;
-  letter-spacing:1px;
+background:#003366;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+position:relative;
 }
 
+.header-left, .header-right{
+font-size:26px;
+cursor:pointer;
+}
+
+header h1{
+font-size:20px;
+}
+
+/* SIDEBAR */
+.sidebar{
+position:fixed;
+top:0;
+left:-250px;
+width:250px;
+height:100%;
+background:#002244;
+color:white;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+}
+
+.sidebar h3{
+margin-bottom:15px;
+}
+
+.sidebar a{
+display:block;
+padding:10px;
+margin-bottom:10px;
+background:#004080;
+border-radius:8px;
+text-decoration:none;
+color:white;
+}
+
+.sidebar a:hover{
+background:#0059b3;
+}
+
+.sidebar.active{
+left:0;
+}
+
+/* RIGHT MENU */
+.right-menu{
+position:fixed;
+top:0;
+right:-250px;
+width:250px;
+height:100%;
+background:#002244;
+padding:20px;
+transition:0.3s;
+z-index:1000;
+}
+
+.right-menu a{
+display:block;
+padding:10px;
+margin-bottom:10px;
+background:#004080;
+border-radius:8px;
+text-decoration:none;
+color:white;
+}
+
+.right-menu.active{
+right:0;
+}
+
+/* MAIN CONTENT */
 .container{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
+flex:1;
+padding:20px;
+width:100%;
 }
 
-.calculator{
-  background:white;
-  width:350px;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-  text-align:center;
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+margin-bottom:20px;
+width:100%;
 }
 
-.calculator h2{
-  margin-bottom:15px;
-  color:#003366;
-}
-
-.subject{
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.subject input{
-  flex:1;
-  padding:8px;
-  border:1px solid #ccc;
-  border-radius:6px;
+input, select{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
 button{
-  padding:10px;
-  margin:5px 0;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
-  transition:0.3s;
-}
-
-.add-btn{
-  background:#00bfff;
-  color:white;
-}
-
-.calc-btn{
-  background:#0066cc;
-  color:white;
-  width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#0066cc;
+color:white;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+margin-bottom:10px;
 }
 
 button:hover{
-  opacity:0.8;
+background:#004080;
 }
 
-.result{
-  margin-top:15px;
-  font-size:20px;
-  font-weight:bold;
-  color:#0066cc;
-}
-
+/* FOOTER */
 footer{
-  background:#003366;
-  color:white;
-  text-align:center;
-  padding:15px;
-  font-size:14px;
+background:#003366;
+color:white;
+padding:20px;
+}
+
+.footer-top{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+}
+
+.footer-left{
+font-size:14px;
+}
+
+.footer-right a{
+color:white;
+margin-left:10px;
+font-size:20px;
+text-decoration:none;
+}
+
+.footer-bottom{
+text-align:center;
+margin-top:15px;
+font-size:14px;
+}
+
+/* MOBILE FIX */
+@media(max-width:768px){
+.footer-top{
+flex-direction:column;
+gap:15px;
+}
 }
 </style>
 </head>
@@ -110,76 +186,140 @@ footer{
 <body>
 
 <header>
-GPA Calculator
+<div class="header-left" onclick="toggleSidebar()">☰</div>
+<h1>GPA Calculator</h1>
+<div class="header-right" onclick="toggleRightMenu()">⋮</div>
 </header>
 
+<!-- LEFT SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<h3><b>Calculators</b></h3>
+<a href="#" onclick="showSection('gpa')">GPA Calculator</a>
+<a href="#" onclick="showSection('currency')">Currency Converter</a>
+<a href="#" onclick="showSection('simple')">Simple Calculator</a>
+</div>
+
+<!-- RIGHT MENU -->
+<div class="right-menu" id="rightMenu">
+<a href="#" onclick="showSection('gpa')">GPA Calculator</a>
+<a href="#" onclick="showSection('currency')">Currency Converter</a>
+<a href="#" onclick="showSection('simple')">Simple Calculator</a>
+</div>
+
 <div class="container">
-  <div class="calculator">
-    <h2>Calculate Your GPA</h2>
 
-    <div id="subjects">
-      <div class="subject">
-        <input type="text" class="grade" placeholder="Grade (A,B,C)">
-        <input type="number" class="credit" placeholder="Credits">
-      </div>
-    </div>
+<!-- GPA CALCULATOR -->
+<div class="card" id="gpaSection">
+<h2>GPA Calculator</h2>
 
-    <button class="add-btn" onclick="addSubject()">+ Add Subject</button>
-    <button class="calc-btn" onclick="calculateGPA()">Calculate GPA</button>
+<input type="number" id="marks" placeholder="Enter Marks (0-100)">
+<button onclick="calculateGrade()">Get Grade & GPA</button>
 
-    <div class="result">
-      Your GPA: <span id="result">0.00</span>
-    </div>
-  </div>
+<p id="gradeResult"></p>
+
+</div>
+
+<!-- CURRENCY CONVERTER -->
+<div class="card" id="currencySection" style="display:none;">
+<h2>Currency Converter (PKR)</h2>
+
+<input type="number" id="pkr" placeholder="Enter PKR Amount">
+<select id="currency">
+<option value="280">USD</option>
+<option value="75">SAR</option>
+<option value="76">AED</option>
+<option value="300">EUR</option>
+</select>
+
+<button onclick="convertCurrency()">Convert</button>
+
+<p id="currencyResult"></p>
+</div>
+
+<!-- SIMPLE CALCULATOR -->
+<div class="card" id="simpleSection" style="display:none;">
+<h2>Simple Calculator</h2>
+
+<input type="text" id="calcInput" placeholder="Enter expression e.g 5+3">
+<button onclick="calculateSimple()">Calculate</button>
+
+<p id="calcResult"></p>
+</div>
+
 </div>
 
 <footer>
-Powered by Irfan Ullah
+<div class="footer-top">
+<div class="footer-left">
+<p>Gmail: izharshaheen70@gmail.com</p>
+<p>Contact: 03179799423</p>
+</div>
+
+<div class="footer-right">
+<a href="https://wa.me/923179799423" target="_blank">🟢</a>
+<a href="https://facebook.com/YOUR_LINK" target="_blank">📘</a>
+<a href="https://instagram.com/YOUR_LINK" target="_blank">📷</a>
+</div>
+</div>
+
+<div class="footer-bottom">
+© Copyright | Powered by Irfanullah
+</div>
 </footer>
 
 <script>
-const gradeMap = {
-  A:4,
-  B:3,
-  C:2,
-  D:1,
-  F:0
-};
-
-function addSubject(){
-  const div = document.createElement("div");
-  div.className="subject";
-  div.innerHTML = `
-    <input type="text" class="grade" placeholder="Grade (A,B,C)">
-    <input type="number" class="credit" placeholder="Credits">
-  `;
-  document.getElementById("subjects").appendChild(div);
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("active");
 }
 
-function calculateGPA(){
-  const grades = document.querySelectorAll(".grade");
-  const credits = document.querySelectorAll(".credit");
+function toggleRightMenu(){
+document.getElementById("rightMenu").classList.toggle("active");
+}
 
-  let totalPoints = 0;
-  let totalCredits = 0;
+function showSection(section){
+document.getElementById("gpaSection").style.display="none";
+document.getElementById("currencySection").style.display="none";
+document.getElementById("simpleSection").style.display="none";
 
-  for(let i=0;i<grades.length;i++){
-    const g = grades[i].value.toUpperCase();
-    const c = parseFloat(credits[i].value) || 1;
+if(section==="gpa"){
+document.getElementById("gpaSection").style.display="block";
+}
+if(section==="currency"){
+document.getElementById("currencySection").style.display="block";
+}
+if(section==="simple"){
+document.getElementById("simpleSection").style.display="block";
+}
+}
 
-    if(gradeMap[g] !== undefined){
-      totalPoints += gradeMap[g] * c;
-      totalCredits += c;
-    }
-  }
+function calculateGrade(){
+let marks = parseInt(document.getElementById("marks").value);
+let gpa=0, grade="";
 
-  let gpa = totalPoints / totalCredits;
+if(marks>=85){gpa=4.0; grade="A (Excellent)";}
+else if(marks>=80){gpa=3.5; grade="B (Very Good)";}
+else if(marks>=70){gpa=3.0; grade="C (Good)";}
+else if(marks>=60){gpa=2.0; grade="D (Fair)";}
+else{gpa=0.0; grade="F (Fail)";}
 
-  if(!totalCredits){
-    gpa = 0;
-  }
+document.getElementById("gradeResult").innerHTML="Grade: "+grade+" | GPA: "+gpa;
+}
 
-  document.getElementById("result").innerText = gpa.toFixed(2);
+function convertCurrency(){
+let pkr=document.getElementById("pkr").value;
+let rate=document.getElementById("currency").value;
+let result=pkr/rate;
+document.getElementById("currencyResult").innerHTML="Converted Amount: "+result.toFixed(2);
+}
+
+function calculateSimple(){
+let exp=document.getElementById("calcInput").value;
+try{
+let result=eval(exp);
+document.getElementById("calcResult").innerHTML="Result: "+result;
+}catch{
+document.getElementById("calcResult").innerHTML="Invalid Expression";
+}
 }
 </script>
 
