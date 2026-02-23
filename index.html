@@ -1,327 +1,707 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculators App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>IRFANULLAH · Multi Calculator</title>
+    <!-- Font Awesome Icons (v6 free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, sans-serif;
-}
+        body {
+            background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
 
-body{
-background:#f2f6ff;
-display:flex;
-flex-direction:column;
-min-height:100vh;
-}
+        /* main app card */
+        .app-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3), 0 4px 18px 0 rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
 
-/* HEADER */
-header{
-background:#003366;
-color:white;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px;
-position:relative;
-}
+        /* ===== HEADER with three lines & three dots ===== */
+        .header {
+            background: #1e2b3c;
+            color: white;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px -6px rgba(0,20,30,0.3);
+        }
 
-.header-left, .header-right{
-font-size:26px;
-cursor:pointer;
-}
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .menu-left i {
+            font-size: 1.7rem;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+            transition: 0.15s;
+        }
+        .menu-left i:active { transform: scale(0.92); }
 
-header h1{
-font-size:20px;
-}
+        .menu-right {
+            position: relative;
+            cursor: pointer;
+        }
+        .menu-right i {
+            font-size: 1.9rem;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+            transition: 0.15s;
+        }
+        .menu-right i:active { transform: scale(0.9); }
 
-/* SIDEBAR */
-.sidebar{
-position:fixed;
-top:0;
-left:-250px;
-width:250px;
-height:100%;
-background:#002244;
-color:white;
-padding:20px;
-transition:0.3s;
-z-index:1000;
-}
+        /* SIDEBAR (left drawer + right drawer) */
+        .drawer {
+            position: fixed;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(20, 30, 40, 0.98);
+            backdrop-filter: blur(12px);
+            color: white;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+            z-index: 1000;
+            padding: 30px 20px;
+            box-shadow: 6px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
+            border-top-right-radius: 32px;
+            border-bottom-right-radius: 32px;
+        }
+        .drawer.left-drawer {
+            left: 0;
+            transform: translateX(-100%);
+        }
+        .drawer.right-drawer {
+            right: 0;
+            transform: translateX(100%);
+            border-radius: 32px 0 0 32px;
+            box-shadow: -6px 0 30px rgba(0,0,0,0.5);
+        }
+        .drawer.show { transform: translateX(0); }
 
-.sidebar h3{
-margin-bottom:15px;
-}
+        .drawer-header {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+            border-bottom: 2px solid #ffb347;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 1.3rem;
+            padding: 16px 18px;
+            margin: 6px 0;
+            background: rgba(255,255,255,0.06);
+            border-radius: 40px;
+            transition: 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+        }
+        .drawer-item:active {
+            background: #ffb347;
+            color: #1e2b3c;
+            transform: scale(0.97);
+            border-color: white;
+        }
+        .drawer-item i { width: 32px; font-size: 1.6rem; }
 
-.sidebar a{
-display:block;
-padding:10px;
-margin-bottom:10px;
-background:#004080;
-border-radius:8px;
-text-decoration:none;
-color:white;
-}
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: transparent;
+            z-index: 999;
+            display: none;
+        }
+        .overlay.show { display: block; }
 
-.sidebar a:hover{
-background:#0059b3;
-}
+        /* main content area */
+        .content {
+            padding: 24px 20px 16px;
+            transition: filter 0.2s;
+        }
 
-.sidebar.active{
-left:0;
-}
+        /* ===== GPA SECTION ===== */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e2b3c;
+            margin-bottom: 18px;
+            letter-spacing: -0.3px;
+            text-shadow: 2px 2px 6px rgba(255,255,255,0.8);
+        }
 
-/* RIGHT MENU */
-.right-menu{
-position:fixed;
-top:0;
-right:-250px;
-width:250px;
-height:100%;
-background:#002244;
-padding:20px;
-transition:0.3s;
-z-index:1000;
-}
+        .subject-card {
+            background: white;
+            border-radius: 32px;
+            padding: 18px 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 22px -10px rgba(0,30,50,0.25),
+                        inset 0 -2px 0 rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
 
-.right-menu a{
-display:block;
-padding:10px;
-margin-bottom:10px;
-background:#004080;
-border-radius:8px;
-text-decoration:none;
-color:white;
-}
+        .subject-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+        .subj-sn { font-weight: 700; color: #2c3e50; width: 30px; font-size: 1.1rem; }
 
-.right-menu.active{
-right:0;
-}
+        .input-group {
+            flex: 1 1 0;
+            min-width: 110px;
+        }
+        .input-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #3a4c62;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            border: none;
+            background: #f2f7fc;
+            border-radius: 28px;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: inset 3px 3px 8px #b8c4d0, inset -3px -3px 8px #ffffff;
+            transition: 0.15s;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        .input-field:focus {
+            outline: 2px solid #ffb347;
+            background: white;
+        }
 
-/* MAIN CONTENT */
-.container{
-flex:1;
-padding:20px;
-width:100%;
-}
+        .grade-badge {
+            background: #ffb347;
+            color: #1e2b3c;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 40px;
+            min-width: 75px;
+            text-align: center;
+            box-shadow: 0 5px 12px rgba(220,140,30,0.4);
+            font-size: 1.2rem;
+            border: 2px solid white;
+        }
 
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-margin-bottom:20px;
-width:100%;
-}
+        /* add button */
+        .add-subject-btn {
+            background: #1e2b3c;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 18px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 16px 0 22px;
+            box-shadow: 0 14px 22px -6px #0f1a24, 0 4px 0 0 #0b141c;
+            transition: 0.1s ease;
+            cursor: pointer;
+        }
+        .add-subject-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 6px 12px -4px #0f1a24;
+        }
 
-input, select{
-width:100%;
-padding:10px;
-margin-bottom:10px;
-border-radius:8px;
-border:1px solid #ccc;
-}
+        /* GPA result */
+        .gpa-result-panel {
+            background: #273b4e;
+            border-radius: 42px;
+            padding: 24px;
+            color: white;
+            box-shadow: 0 16px 28px -10px #1a2c3b;
+            margin: 24px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gpa-label { font-size: 1.2rem; opacity: 0.8; }
+        .gpa-number { font-size: 3.3rem; font-weight: 800; line-height: 1; letter-spacing: 2px; text-shadow: 0 3px 0 #a07020; }
 
-button{
-padding:10px;
-border:none;
-border-radius:10px;
-background:#0066cc;
-color:white;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
-margin-bottom:10px;
-}
+        /* simple & currency converter panels (hidden by default) */
+        .calc-panel {
+            background: white;
+            border-radius: 42px;
+            padding: 28px 22px;
+            box-shadow: inset 0 2px 8px white, 0 18px 28px -14px #1f2f3c;
+            margin: 18px 0;
+        }
+        .hidden { display: none; }
 
-button:hover{
-background:#004080;
-}
+        .currency-row, .simple-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 18px 0;
+        }
+        .currency-input {
+            flex: 2;
+            min-width: 180px;
+        }
+        .convert-btn {
+            background: #ffb347;
+            border: none;
+            padding: 16px 28px;
+            border-radius: 48px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 0 #b16f1a, 0 8px 16px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.07s linear;
+            color: #1e2b3c;
+        }
+        .convert-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #b16f1a, 0 5px 12px rgba(0,0,0,0.2);
+        }
+        .result-badge {
+            background: #eef3f9;
+            border-radius: 50px;
+            padding: 16px 22px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            box-shadow: inset 2px 2px 6px #b0beca, inset -4px -4px 8px white;
+        }
 
-/* FOOTER */
-footer{
-background:#003366;
-color:white;
-padding:20px;
-}
+        /* footer */
+        .footer {
+            background: #14222e;
+            color: #ddd;
+            padding: 24px 22px 10px;
+            border-top: 3px solid #ffb347;
+        }
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #1f3343;
+            padding: 10px 18px;
+            border-radius: 40px;
+            box-shadow: inset 0 2px 4px #2e445a;
+        }
+        .social-icons {
+            display: flex;
+            gap: 22px;
+        }
+        .social-icons a {
+            color: white;
+            background: #ffb347;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 0 #a4631a, 0 10px 18px black;
+            transition: 0.08s;
+            text-decoration: none;
+        }
+        .social-icons a:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #a4631a, 0 8px 16px black;
+        }
 
-.footer-top{
-display:flex;
-justify-content:space-between;
-flex-wrap:wrap;
-}
+        .copyright {
+            text-align: center;
+            border-top: 1px solid #2e4255;
+            padding-top: 18px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: #a1b5c8;
+        }
+        .copyright strong { color: #ffb347; font-weight: 700; }
 
-.footer-left{
-font-size:14px;
-}
-
-.footer-right a{
-color:white;
-margin-left:10px;
-font-size:20px;
-text-decoration:none;
-}
-
-.footer-bottom{
-text-align:center;
-margin-top:15px;
-font-size:14px;
-}
-
-/* MOBILE FIX */
-@media(max-width:768px){
-.footer-top{
-flex-direction:column;
-gap:15px;
-}
-}
-</style>
+        /* utility */
+        .bold { font-weight: 700; }
+    </style>
 </head>
-
 <body>
 
-<header>
-<div class="header-left" onclick="toggleSidebar()">☰</div>
-<h1>GPA Calculator</h1>
-<div class="header-right" onclick="toggleRightMenu()">⋮</div>
-</header>
+<div class="app-container" id="appContainer">
+    <!-- header -->
+    <div class="header">
+        <div class="menu-left" id="menuLeftBtn">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div style="font-size: 1.7rem; font-weight: 700; letter-spacing: 1px;">CALCULATORS</div>
+        <div class="menu-right" id="menuRightBtn">
+            <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+    </div>
 
-<!-- LEFT SIDEBAR -->
-<div class="sidebar" id="sidebar">
-<h3><b>Calculators</b></h3>
-<a href="#" onclick="showSection('gpa')">GPA Calculator</a>
-<a href="#" onclick="showSection('currency')">Currency Converter</a>
-<a href="#" onclick="showSection('simple')">Simple Calculator</a>
+    <!-- main content -->
+    <div class="content" id="mainContent">
+        <!-- GPA calculator block (visible by default) -->
+        <div id="gpaBlock">
+            <div class="section-title"><i class="fas fa-graduation-cap" style="margin-right: 10px;"></i> GPA calculator</div>
+            <div id="subjectsContainer">
+                <!-- one initial subject row -->
+                <div class="subject-card" id="subject1">
+                    <div class="subject-row">
+                        <span class="subj-sn">1</span>
+                        <div class="input-group">
+                            <label>Subject</label>
+                            <input type="text" class="input-field subj-name" placeholder="e.g. Maths" value="Subject 1">
+                        </div>
+                        <div class="input-group">
+                            <label>Obtain %</label>
+                            <input type="number" class="input-field subj-marks" step="0.01" min="0" max="100" value="85">
+                        </div>
+                        <div class="input-group">
+                            <label>Credit Hrs</label>
+                            <input type="number" class="input-field subj-credit" step="0.5" min="0" value="3">
+                        </div>
+                        <div class="grade-badge subj-grade">A</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="add-subject-btn" id="addSubjectBtn"><i class="fas fa-plus-circle"></i> Add subject</button>
+
+            <div class="gpa-result-panel">
+                <span class="gpa-label">Cumulative GPA</span>
+                <span class="gpa-number" id="gpaDisplay">4.00</span>
+            </div>
+        </div>
+
+        <!-- Currency converter block (hidden) -->
+        <div id="currencyBlock" class="hidden">
+            <div class="section-title"><i class="fas fa-coins"></i> PKR ⇄ other</div>
+            <div class="calc-panel">
+                <div class="currency-row">
+                    <div class="input-group currency-input">
+                        <label>PKR (Rs.)</label>
+                        <input type="number" id="pkrAmount" class="input-field" value="1000" step="10">
+                    </div>
+                    <select id="currencySelect" class="input-field" style="flex:1; min-width:130px;">
+                        <option value="0.0036">USD (dollar)</option>
+                        <option value="0.0033">EUR (euro)</option>
+                        <option value="0.0029">GBP (pound)</option>
+                        <option value="0.46">INR (rupee)</option>
+                        <option value="0.0051">AUD</option>
+                    </select>
+                    <button class="convert-btn" id="convertCurrencyBtn"><i class="fas fa-arrow-right-arrow-left"></i> Convert</button>
+                </div>
+                <div class="result-badge" id="currencyResult">3.60 USD</div>
+            </div>
+        </div>
+
+        <!-- Simple calculator block (hidden) -->
+        <div id="simpleCalcBlock" class="hidden">
+            <div class="section-title"><i class="fas fa-calculator"></i> Simple calculator</div>
+            <div class="calc-panel">
+                <div class="simple-row">
+                    <input type="number" id="simpleA" class="input-field" value="25" step="any">
+                    <select id="simpleOp" class="input-field" style="width:80px; text-align:center;">
+                        <option value="+">+</option>
+                        <option value="-">-</option>
+                        <option value="*">×</option>
+                        <option value="/">÷</option>
+                    </select>
+                    <input type="number" id="simpleB" class="input-field" value="7" step="any">
+                    <button class="convert-btn" id="simpleCalcBtn"> = </button>
+                </div>
+                <div class="result-badge" id="simpleResult">32</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="footer">
+        <div class="footer-top">
+            <div class="contact-info">
+                <div class="contact-item"><i class="fas fa-envelope"></i> izharshaheen70@gmail.com</div>
+                <div class="contact-item"><i class="fas fa-phone-alt"></i> 03179799423</div>
+            </div>
+            <div class="social-icons">
+                <a href="https://facebook.com" target="_blank" id="fbLink"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com" target="_blank" id="instaLink"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/923179799423" target="_blank" id="waLink"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+        <div class="copyright">
+            © Copyright · powered by <strong>IRFANULLAH</strong>
+        </div>
+    </div>
 </div>
 
-<!-- RIGHT MENU -->
-<div class="right-menu" id="rightMenu">
-<a href="#" onclick="showSection('gpa')">GPA Calculator</a>
-<a href="#" onclick="showSection('currency')">Currency Converter</a>
-<a href="#" onclick="showSection('simple')">Simple Calculator</a>
+<!-- LEFT drawer (three lines) -->
+<div class="drawer left-drawer" id="leftDrawer">
+    <div class="drawer-header"><i class="fas fa-calculator"></i> Calculators</div>
+    <div class="drawer-item" data-tool="gpa"><i class="fas fa-graduation-cap"></i> GPA calculator</div>
+    <div class="drawer-item" data-tool="currency"><i class="fas fa-coins"></i> Currency converter</div>
+    <div class="drawer-item" data-tool="simple"><i class="fas fa-calculator"></i> Simple calculator</div>
 </div>
 
-<div class="container">
-
-<!-- GPA CALCULATOR -->
-<div class="card" id="gpaSection">
-<h2>GPA Calculator</h2>
-
-<input type="number" id="marks" placeholder="Enter Marks (0-100)">
-<button onclick="calculateGrade()">Get Grade & GPA</button>
-
-<p id="gradeResult"></p>
-
+<!-- RIGHT drawer (three dots) -->
+<div class="drawer right-drawer" id="rightDrawer">
+    <div class="drawer-header"><i class="fas fa-bars"></i> Tools</div>
+    <div class="drawer-item" data-tool="gpa"><i class="fas fa-graduation-cap"></i> GPA calculator</div>
+    <div class="drawer-item" data-tool="currency"><i class="fas fa-coins"></i> Currency converter</div>
+    <div class="drawer-item" data-tool="simple"><i class="fas fa-calculator"></i> Simple calculator</div>
 </div>
 
-<!-- CURRENCY CONVERTER -->
-<div class="card" id="currencySection" style="display:none;">
-<h2>Currency Converter (PKR)</h2>
-
-<input type="number" id="pkr" placeholder="Enter PKR Amount">
-<select id="currency">
-<option value="280">USD</option>
-<option value="75">SAR</option>
-<option value="76">AED</option>
-<option value="300">EUR</option>
-</select>
-
-<button onclick="convertCurrency()">Convert</button>
-
-<p id="currencyResult"></p>
-</div>
-
-<!-- SIMPLE CALCULATOR -->
-<div class="card" id="simpleSection" style="display:none;">
-<h2>Simple Calculator</h2>
-
-<input type="text" id="calcInput" placeholder="Enter expression e.g 5+3">
-<button onclick="calculateSimple()">Calculate</button>
-
-<p id="calcResult"></p>
-</div>
-
-</div>
-
-<footer>
-<div class="footer-top">
-<div class="footer-left">
-<p>Gmail: izharshaheen70@gmail.com</p>
-<p>Contact: 03179799423</p>
-</div>
-
-<div class="footer-right">
-<a href="https://wa.me/923179799423" target="_blank">🟢</a>
-<a href="https://facebook.com/YOUR_LINK" target="_blank">📘</a>
-<a href="https://instagram.com/YOUR_LINK" target="_blank">📷</a>
-</div>
-</div>
-
-<div class="footer-bottom">
-© Copyright | Powered by Irfanullah
-</div>
-</footer>
+<div class="overlay" id="overlay"></div>
 
 <script>
-function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("active");
-}
+    (function() {
+        // ------- grading from sheet -------
+        function getGradeAndValue(percent) {
+            if (percent >= 85) return { grade: 'A', value: 4.0 };
+            else if (percent === 84) return { grade: 'A', value: 3.9 };
+            else if (percent === 83) return { grade: 'A', value: 3.8 };
+            else if (percent === 82) return { grade: 'A', value: 3.7 };
+            else if (percent === 81) return { grade: 'A', value: 3.6 };
+            else if (percent === 80) return { grade: 'A', value: 3.5 };
+            else if (percent === 79) return { grade: 'B', value: 3.4 };
+            else if (percent === 78) return { grade: 'B', value: 3.4 };
+            else if (percent === 77) return { grade: 'B', value: 3.3 };
+            else if (percent === 76) return { grade: 'B', value: 3.3 };
+            else if (percent === 75) return { grade: 'B', value: 3.2 };
+            else if (percent === 74) return { grade: 'B', value: 3.2 };
+            else if (percent === 73) return { grade: 'B', value: 3.1 };
+            else if (percent === 72) return { grade: 'B', value: 3.0 };
+            else if (percent === 71) return { grade: 'C', value: 2.9 };
+            else if (percent === 70) return { grade: 'C', value: 2.8 };
+            else if (percent === 69) return { grade: 'C', value: 2.7 };
+            else if (percent === 68) return { grade: 'C', value: 2.6 };
+            else if (percent === 67) return { grade: 'C', value: 2.5 };
+            else if (percent === 66) return { grade: 'C', value: 2.5 };
+            else if (percent === 65) return { grade: 'C', value: 2.4 };
+            else if (percent === 64) return { grade: 'C', value: 2.4 };
+            else if (percent === 63) return { grade: 'C', value: 2.3 };
+            else if (percent === 62) return { grade: 'C', value: 2.2 };
+            else if (percent === 61) return { grade: 'C', value: 2.1 };
+            else if (percent === 60) return { grade: 'C', value: 2.0 };
+            else if (percent === 59) return { grade: 'D', value: 1.9 };
+            else if (percent === 58) return { grade: 'D', value: 1.8 };
+            else if (percent === 57) return { grade: 'D', value: 1.7 };
+            else if (percent === 56) return { grade: 'D', value: 1.6 };
+            else if (percent === 55) return { grade: 'D', value: 1.5 };
+            else if (percent === 54) return { grade: 'D', value: 1.4 };
+            else if (percent === 53) return { grade: 'D', value: 1.3 };
+            else if (percent === 52) return { grade: 'D', value: 1.2 };
+            else if (percent === 51) return { grade: 'D', value: 1.1 };
+            else if (percent === 50) return { grade: 'D', value: 1.0 };
+            else return { grade: 'F', value: 0.0 };
+        }
 
-function toggleRightMenu(){
-document.getElementById("rightMenu").classList.toggle("active");
-}
+        // ----- subjects handling -----
+        let subjectCount = 1;
+        const container = document.getElementById('subjectsContainer');
+        const gpaSpan = document.getElementById('gpaDisplay');
 
-function showSection(section){
-document.getElementById("gpaSection").style.display="none";
-document.getElementById("currencySection").style.display="none";
-document.getElementById("simpleSection").style.display="none";
+        function refreshAllGrades() {
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach(card => {
+                const marksInput = card.querySelector('.subj-marks');
+                const gradeDiv = card.querySelector('.subj-grade');
+                if (marksInput && gradeDiv) {
+                    const val = parseFloat(marksInput.value);
+                    if (!isNaN(val)) {
+                        const { grade } = getGradeAndValue(val);
+                        gradeDiv.innerText = grade;
+                    } else gradeDiv.innerText = 'F';
+                }
+            });
+            computeGPA();
+        }
 
-if(section==="gpa"){
-document.getElementById("gpaSection").style.display="block";
-}
-if(section==="currency"){
-document.getElementById("currencySection").style.display="block";
-}
-if(section==="simple"){
-document.getElementById("simpleSection").style.display="block";
-}
-}
+        function computeGPA() {
+            let totalPoints = 0, totalCredits = 0;
+            const cards = document.querySelectorAll('.subject-card');
+            cards.forEach(card => {
+                const marks = parseFloat(card.querySelector('.subj-marks')?.value);
+                const credit = parseFloat(card.querySelector('.subj-credit')?.value);
+                if (!isNaN(marks) && !isNaN(credit) && credit > 0) {
+                    const { value } = getGradeAndValue(marks);
+                    totalPoints += value * credit;
+                    totalCredits += credit;
+                }
+            });
+            if (totalCredits === 0) { gpaSpan.innerText = '0.00'; return; }
+            const gpa = (totalPoints / totalCredits).toFixed(2);
+            gpaSpan.innerText = gpa;
+        }
 
-function calculateGrade(){
-let marks = parseInt(document.getElementById("marks").value);
-let gpa=0, grade="";
+        function attachListeners(card) {
+            card.querySelectorAll('.subj-marks, .subj-credit').forEach(inp => {
+                inp.removeEventListener('input', refreshAllGrades);
+                inp.addEventListener('input', refreshAllGrades);
+            });
+        }
 
-if(marks>=85){gpa=4.0; grade="A (Excellent)";}
-else if(marks>=80){gpa=3.5; grade="B (Very Good)";}
-else if(marks>=70){gpa=3.0; grade="C (Good)";}
-else if(marks>=60){gpa=2.0; grade="D (Fair)";}
-else{gpa=0.0; grade="F (Fail)";}
+        // initial subject listeners
+        document.querySelectorAll('.subject-card').forEach(c => attachListeners(c));
+        refreshAllGrades();
 
-document.getElementById("gradeResult").innerHTML="Grade: "+grade+" | GPA: "+gpa;
-}
+        // add subject
+        document.getElementById('addSubjectBtn').addEventListener('click', function() {
+            subjectCount++;
+            const newCard = document.createElement('div');
+            newCard.className = 'subject-card';
+            newCard.id = `subject${subjectCount}`;
+            newCard.innerHTML = `
+                <div class="subject-row">
+                    <span class="subj-sn">${subjectCount}</span>
+                    <div class="input-group">
+                        <label>Subject</label>
+                        <input type="text" class="input-field subj-name" placeholder="Name" value="Subj ${subjectCount}">
+                    </div>
+                    <div class="input-group">
+                        <label>Obtain %</label>
+                        <input type="number" class="input-field subj-marks" step="0.01" min="0" max="100" value="75">
+                    </div>
+                    <div class="input-group">
+                        <label>Credit Hrs</label>
+                        <input type="number" class="input-field subj-credit" step="0.5" min="0" value="3">
+                    </div>
+                    <div class="grade-badge subj-grade">B</div>
+                </div>
+            `;
+            container.appendChild(newCard);
+            attachListeners(newCard);
+            refreshAllGrades();
+        });
 
-function convertCurrency(){
-let pkr=document.getElementById("pkr").value;
-let rate=document.getElementById("currency").value;
-let result=pkr/rate;
-document.getElementById("currencyResult").innerHTML="Converted Amount: "+result.toFixed(2);
-}
+        // Drawer functionality + navigation
+        const leftDrawer = document.getElementById('leftDrawer');
+        const rightDrawer = document.getElementById('rightDrawer');
+        const overlay = document.getElementById('overlay');
+        const menuLeft = document.getElementById('menuLeftBtn');
+        const menuRight = document.getElementById('menuRightBtn');
 
-function calculateSimple(){
-let exp=document.getElementById("calcInput").value;
-try{
-let result=eval(exp);
-document.getElementById("calcResult").innerHTML="Result: "+result;
-}catch{
-document.getElementById("calcResult").innerHTML="Invalid Expression";
-}
-}
+        function hideDrawers() {
+            leftDrawer.classList.remove('show');
+            rightDrawer.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        menuLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideDrawers();
+            leftDrawer.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        menuRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideDrawers();
+            rightDrawer.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        overlay.addEventListener('click', hideDrawers);
+
+        // switching tools from drawers
+        const gpaBlock = document.getElementById('gpaBlock');
+        const currencyBlock = document.getElementById('currencyBlock');
+        const simpleBlock = document.getElementById('simpleCalcBlock');
+
+        function activateTool(tool) {
+            gpaBlock.classList.add('hidden');
+            currencyBlock.classList.add('hidden');
+            simpleBlock.classList.add('hidden');
+            if (tool === 'gpa') gpaBlock.classList.remove('hidden');
+            else if (tool === 'currency') currencyBlock.classList.remove('hidden');
+            else if (tool === 'simple') simpleBlock.classList.remove('hidden');
+            hideDrawers();
+        }
+
+        document.querySelectorAll('.drawer-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const tool = item.dataset.tool;
+                activateTool(tool);
+            });
+        });
+
+        // currency converter logic
+        document.getElementById('convertCurrencyBtn').addEventListener('click', function() {
+            const pkr = parseFloat(document.getElementById('pkrAmount').value) || 0;
+            const rate = parseFloat(document.getElementById('currencySelect').value);
+            const curText = document.getElementById('currencySelect').selectedOptions[0].text.split(' ')[0];
+            const converted = (pkr * rate).toFixed(2);
+            document.getElementById('currencyResult').innerText = `${converted} ${curText}`;
+        });
+        // default convert
+        document.getElementById('convertCurrencyBtn').click();
+
+        // simple calculator
+        document.getElementById('simpleCalcBtn').addEventListener('click', function() {
+            const a = parseFloat(document.getElementById('simpleA').value) || 0;
+            const b = parseFloat(document.getElementById('simpleB').value) || 0;
+            const op = document.getElementById('simpleOp').value;
+            let res = 0;
+            if (op === '+') res = a + b;
+            else if (op === '-') res = a - b;
+            else if (op === '*') res = a * b;
+            else if (op === '/') res = b !== 0 ? a / b : '∞';
+            document.getElementById('simpleResult').innerText = res;
+        });
+        document.getElementById('simpleCalcBtn').click();
+
+        // social links (customize)
+        document.getElementById('fbLink').href = 'https://facebook.com/irfanullah';
+        document.getElementById('instaLink').href = 'https://instagram.com/irfanullah';
+        // whatsapp already set
+
+        // ensure gpa shows default
+        computeGPA();
+    })();
 </script>
-
 </body>
-</html>
+                          </html>
